@@ -1,112 +1,57 @@
-# Welcome to Learning with Astra #
+# Learning with Astra #
 
-If you have attended recently our workshops here, we ask you to create your own Github repo showing off your learning journey with Astra. You could use this repo here as a start: fork it and update it with your own examples.
+This repository is a fork of [learning-with-astra](https://github.com/bettinaswynnerton/learning-with-Astra) repository, created so to get hands-on experience with cassandra databases.
 
-## Explain your use case ##
+## Use case
 
-Pick an example application that you could see on Astra and describe the entities and queries for it. 
+A simple Pomodoro tracking app written in Python, with data stored in Cassandra via Astra.
 
-Include diagrams, screenshots etc to make it more interesting and better convey your ideas.
+The app uses a standard Pomodoro of 25 minutes. Once executed, the app will record the current time as the end of a Pomodoro session, while also recording the start time ( (current time) - 25 minutes).
 
-## Create your own tables on Astra ##
+DB Connection is on .gitignore to preserve credentials. The source can be fetched [here](https://github.com/DataStax-Academy/workshop-crud-with-python-and-node/blob/5b01543a18ba31d6fddc9953dc458c96aadab220/crud-python/Ex02_Connect_to_Cassandra.py).
 
-Example tables that we used in the workshop:
+## Tables
 
-```
-CREATE TABLE IF NOT EXISTS comments_by_user (
-    userid uuid,
-    commentid timeuuid,
-    videoid uuid,
-    comment text,
-    PRIMARY KEY ((userid), commentid)
-) WITH CLUSTERING ORDER BY (commentid DESC);
-
-CREATE TABLE IF NOT EXISTS comments_by_video (
-    videoid   uuid,
-    commentid timeuuid,
-    userid    uuid,
-    comment   text,
-    PRIMARY KEY ((videoid), commentid)
-) WITH CLUSTERING ORDER BY (commentid DESC);
-```
-
-Show us your own tables - for the data model of your choice.
+Project Tables
 
 ```
-Update with your own table
+CREATE TABLE IF NOT EXISTS pomodoro_by_user (
+	user_id uuid,
+	start_time timestamp,
+	end_time timestamp,	
+	task text,
+	category text,
+	comments text,	
+    PRIMARY KEY (user_id, end_time)
+);
 ```
 
-## Insert some data ##
+```
+use pomodoro;
+token@cqlsh:pomodoro> describe tables;
+pomodoro_by_user
+```
+
+## Excution Sample
+
+```
+python insert_pomodoro.py  "Cassandra" "Certifications Studies"
+Pomodoro recorded
+
+Start Time: 2020-10-11 10:50:57.986745
+End Time: 2020-10-11 11:15:57.986745
+Closing connection (up to 10s)
+```
+
+## Selecting Data
 
 Here some example data that we used in the workshop:
 
 ```
-INSERT INTO comments_by_user (userid, commentid, videoid, comment)
-VALUES (11111111-1111-1111-1111-111111111111, NOW(), 12345678-1234-1111-1111-111111111111, 'I keep watching this video');
+ select * from pomodoro_by_user;
 
-INSERT INTO comments_by_user (userid, commentid, videoid, comment)
-VALUES (11111111-1111-1111-1111-111111111111, NOW(), 12345678-1234-1111-1111-111111111111, 'Soo many comments for the same video');
-```
-
-Show off your own data inserts, into your own tables:
+ user_id                              | end_time                        | category               | comments | start_time                      | task
+--------------------------------------+---------------------------------+------------------------+----------+---------------------------------+-----------
+ 230995ee-c697-11ea-b7a1-8c85907c08dd | 2020-10-11 11:14:45.438000+0000 | Certifications Studies |     null | 2020-10-11 10:49:45.438000+0000 | Cassandra
 
 ```
-Your data goes here
-```
-
-Now show the output, for example:
-
-```
-SELECT * FROM <your table>;
-...
-...
-...
-```
-
-Include some screenshots!
-
-## Experiment with CRUD and show the outputs: ##
-
-Examples from the workshop:
-
-```
-UPDATE comments_by_video 
-SET comment = 'This is fun!' 
-WHERE videoid = 12345678-1234-1111-1111-111111111111 AND commentid = 494a3f00-e966-11ea-84bf-83e48ffdc8ac;
-
-SELECT * FROM comments_by_video;
-```
-
-```
-DELETE FROM comments_by_video 
-WHERE videoid = 12345678-1234-1111-1111-111111111111 AND commentid = 494a3f00-e966-11ea-84bf-83e48ffdc8ac;
-
-SELECT * FROM comments_by_video;
-```
-
-Show us something similar with your own tables.
-
-Try something different:
-
-Check out the CQL reference and try commands that we did not use in the workshop:
-
-https://docs.datastax.com/en/cql-oss/3.3/cql/cql_reference/cqlReferenceTOC.html
-
-Let us know what you find:
-
-```
-Update with your own examples
-```
-
-Or connect, read and write to your Astra database via other methods.
-
-Tell us how you do it, we would love to know. 
-
-```
-Show your connection code
-```
-
-The starry sky is the limit: Build your own app with Astra and show it off for a chance to have it included with our Sample Galleries
-
-
-
